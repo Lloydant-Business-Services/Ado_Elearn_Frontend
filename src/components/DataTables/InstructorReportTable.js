@@ -144,7 +144,7 @@ export default class InstructorReportTable extends Component {
       doc.setFontSize(15);
       doc.setLineDash([20, 0], 10);
       doc.line(50, 135, 553, 135);
-      doc.text("INSTRUCTOR REPORT", 60, 150);
+      doc.text("LECTURER REPORT", 60, 150);
       doc.text("Date: " + " " + today, 380, 150);
       doc.setLineDash([20, 0], 10);
       doc.line(50, 155, 553, 155);

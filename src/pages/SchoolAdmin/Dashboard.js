@@ -8,7 +8,9 @@ import toast, {Toaster} from "react-hot-toast";
 import ClipLoader from "react-spinners/ClipLoader";
 import {Link} from "react-router-dom";
 import Spinner from "../Front/Spinner"
+// import {Drawer, Modal} from "antd"
 
+import {Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 
 class SchoolAdminDashboard extends Component {
 	state = {
@@ -31,6 +33,8 @@ class SchoolAdminDashboard extends Component {
 		},
 	});
 	
+
+
 	loadDataFromServer = () => {
 		this.setState({pageLoading: true});
 		
@@ -58,12 +62,22 @@ class SchoolAdminDashboard extends Component {
 		
 	};
 	
+	toggleRoleDrawer = () => {
+		console.log("gfch")
+		this.setState({
+			openRoleDrawer: !this.state.openRoleDrawer
+		})
+	}
+
 	componentDidMount() {
 		this.loadDataFromServer();
 	}
 	
 	render() {
+        //require("antd/dist/antd.css");
+
 		return (
+			
 			<>
 				{this.state.pageLoading ?
 					<Spinner
@@ -76,12 +90,101 @@ class SchoolAdminDashboard extends Component {
 					position="top-center"
 					reverseOrder={false}
 				/>
-				
+
+<Modal isOpen={this.state.openRoleDrawer} toggle={this.toggleRoleDrawer} className="mt-5 md">
+					<form onSubmit={(e) => this.createSession(e)}>
+						<ModalHeader toggle={this.toggleNewSession}>
+							<span className="h2">Login as:</span>
+						</ModalHeader>
+						
+						<ModalBody>
+						<div className='row'>
+						<div className='col-sm-12 '>
+						<Link to="/schooladmin/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									School Admin &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+							<div className='col-sm-12 mt-3'>
+							<Link to="/hod/dashboard">
+
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Department Administrator &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+						
+							<div className='col-sm-12 mt-3'>
+							<Link to="/instructor/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Lecturers &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+
+							<div className='col-sm-12 mt-3'>
+							<Link to="/student/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Student &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+
+						</div>
+						</ModalBody>
+						
+						{/* <ModalFooter>
+							<button className="btn btn-primary">
+								Add Session
+								{
+									this.state.newSessionLoading ?
+										<span className="ml-2">
+											<ClipLoader size={20} color={"#fff"}
+														Loading={this.state.newSessionLoading}/>
+										</span>
+										:
+										null
+								}
+							</button>
+							
+							<button type="button" className="btn btn-danger" onClick={this.toggleNewSession}>Close</button>
+						</ModalFooter> */}
+					</form>
+				</Modal>
+				<Modal title="Basic Modal" open={true} onOk={this.toggleRoleDrawer} onCancel={this.toggleRoleDrawer}>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
+				 {/* <Drawer title="Basic Drawer" placement="right" 
+					onClose={this.toggleRoleDrawer}
+				  	open={true}
+					style={{zIndex:"99999"}}
+				  >
+					<p>Some contents...</p>
+					<p>Some contents...</p>
+					<p>Some contents...</p>
+				</Drawer> */}
 				<div className="container-fluid py-5">
-					<h1 className="mb-3 text-primary">
-						<Unicons.UilApps size="24" className="mr-2"/>
-						Dashboard
-					</h1>
+					<div className='row'>
+						<div className='col-sm-12 col-lg-10'>
+							<h1 className="mb-3 text-primary">
+							<Unicons.UilApps size="24" className="mr-2"/>
+							Dashboard
+							</h1>
+						</div>
+
+						{/* <div className='col-sm-12 col-lg-2'>
+							<h1 className="mb-3 text-primary">
+							<button onClick={this.toggleRoleDrawer} className='btn btn-primary'>Switch Role &nbsp;<i className='fa fa-angle-down'/></button>
+							</h1>
+						</div> */}
+					</div>
 					
 					<div className="row mb-3">
 						<div className="col-lg-8">
@@ -130,7 +233,7 @@ class SchoolAdminDashboard extends Component {
 												<div className="media">
 													<div className="media-body">
 														<h1>{this.state.institutionDetails.allInstructors}</h1>
-														<p className="mb-0 text-dark">Instructors</p>
+														<p className="mb-0 text-dark">Lecturers</p>
 													</div>
 													
 													<div className="ml-2">
@@ -275,8 +378,12 @@ class SchoolAdminDashboard extends Component {
 												</div>
 									}
 								</div>
+								
 							</div>
+							
 						</div>
+
+						
 					</div>
 				</div>
 			</>

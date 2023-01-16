@@ -42,7 +42,7 @@ class SuperAdminHeader extends React.Component {
 										</span>
 										<Media className="ml-2 d-none d-lg-block">
 											<span className="mb-0 text-sm font-weight-bold">
-												{this.state.payLoad.userName}
+												{this.state.payLoad?.userName}
 											</span>
 										</Media>
 									</Media>

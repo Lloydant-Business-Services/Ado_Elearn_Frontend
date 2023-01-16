@@ -23,6 +23,10 @@ class StudentCourses extends Component {
 		activeSessionSemester: [],
 		myCourses: [],
 		multipleCourses: [],
+		profileProps: JSON.parse(localStorage.getItem('ELearnUserProfilre')),
+		allocationState: "Departmental",
+		loadState: "load all courses"
+
 	};
 	
 	openRegisterCourse = () => {
@@ -89,20 +93,26 @@ class StudentCourses extends Component {
 		},
 	});
 	
-	loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
-		style: {
-			border: '1px solid #DC2626',
-			padding: '16px',
-			background: '#DC2626',
-			color: '#fff',
-			borderRadius: '3rem',
-		},
-		iconTheme: {
-			primary: '#FFFAEE',
-			secondary: '#DC2626',
-		},
-	});
+	// loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
+	// 	style: {
+	// 		border: '1px solid #DC2626',
+	// 		padding: '16px',
+	// 		background: '#DC2626',
+	// 		color: '#fff',
+	// 		borderRadius: '3rem',
+	// 	},
+	// 	iconTheme: {
+	// 		primary: '#FFFAEE',
+	// 		secondary: '#DC2626',
+	// 	},
+	// });
 	
+
+
+	loadDataError = (error) => {
+
+		
+	};
 	toggleAddMultipleCourse = (allocationId) => {
 		let courses = this.state.multipleCourses;
 		
@@ -221,19 +231,9 @@ class StudentCourses extends Component {
 				this.setState({pageLoading: false});
 			});
 		
-		Endpoint.getAllocatedCourses()
-			.then((res) => {
-				let newCourseObj = [];
-				for (let i=0; i<res.data.length; i++) {
-					let entry = {value: res.data[i].courseAllocationId, label: res.data[i].courseTitle };
-					newCourseObj.push(entry);
-				}
-				this.setState({allocatedCourses: res.data, allocatedCourseNames: newCourseObj, pageLoading: false})
-			})
-			.catch((error) => {
-				this.loadDataError(error, this);
-				this.setState({pageLoading: false});
-			});
+	
+
+this.toggleDepartmentalCourses()			
 		
 		Endpoint.getActiveSessionSemester()
 			.then((res) => {
@@ -257,6 +257,42 @@ class StudentCourses extends Component {
 					});
 			})
 	};
+toggleDepartmentalCourses = () => {
+	Endpoint.getStudentCoursesByDepartment(this.state.profileProps?.department?.id)
+			.then((res) => {
+				console.log(res.data)
+				let newCourseObj = [];
+				for (let i=0; i<res.data.length; i++) {
+					let entry = {value: res.data[i].courseAllocationId, label: res.data[i].courseTitle };
+					newCourseObj.push(entry);
+				}
+				this.setState({allocatedCourses: res.data, allocatedCourseNames: newCourseObj, pageLoading: false,  allocationState:"Departmental", loadState: "load all courses"})
+			})
+			.catch((error) => {
+				this.loadDataError(error, this);
+				this.setState({pageLoading: false});
+			});
+			
+}
+	toggleAllCourses = () => {
+		if(this.state.allocationState == "All Courses"){
+			this.toggleDepartmentalCourses()
+			return
+		}
+		Endpoint.getAllocatedCourses()
+		.then((res) => {
+			let newCourseObj = [];
+			for (let i=0; i<res.data.length; i++) {
+				let entry = {value: res.data[i].courseAllocationId, label: res.data[i].courseTitle };
+				newCourseObj.push(entry);
+			}
+			this.setState({allocatedCourses: res.data, allocatedCourseNames: newCourseObj, pageLoading: false, allocationState:"All Courses", loadState: "load departmetal courses"})
+		})
+		.catch((error) => {
+			this.loadDataError(error, this);
+			this.setState({pageLoading: false});
+		});
+	}
 	
 	componentDidMount() {
 		this.loadDataFromServer();
@@ -354,7 +390,7 @@ class StudentCourses extends Component {
 					</div>
 				</div>
 				
-				
+				{/* Register single */}
 				<Modal isOpen={this.state.registerCourse} toggle={this.toggleRegisterCourse} className="mt-5 md">
 					<form onSubmit={(e) => this.registerCourse(e)}>
 						<ModalHeader toggle={this.toggleRegisterCourse}>
@@ -428,6 +464,9 @@ class StudentCourses extends Component {
 					</form>
 				</Modal>
 			
+
+
+			{/* Register Multiple */}
 				<Modal isOpen={this.state.registerMultiple} toggle={this.toggleRegisterMultiple} className="mt-5 md" size="lg">
 					<form onSubmit={(e) => this.registerMultipleCourses(e)}>
 						<ModalHeader toggle={this.toggleRegisterMultiple}>
@@ -437,10 +476,11 @@ class StudentCourses extends Component {
 						<ModalBody>
 							<div className="form-group row">
 								<div className="col-md-12">
-									<label className="mt-2 mr-2 ">
-										<b>Select Courses:</b>
-									</label>
 									
+									<label className="mt-2 mr-2 ">
+										<b>Select Courses ({this.state.allocationState}):</b>
+									</label>
+									<button type='button' onClick={this.toggleAllCourses} className='btn btn-outline-primary btn-sm' style={{float:"right"}}>{this.state.loadState}</button>
 									<div className="row">
 										{
 											this.state.allocatedCourses && this.state.allocatedCourses.length ?

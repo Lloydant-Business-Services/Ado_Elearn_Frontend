@@ -17,7 +17,7 @@ const HODBody = (props) => {
 	return (
 		<>
 			<div className={props[stateKeys.PAGE_CLASS]}>
-				<section className="sidenav-enabled pb-3 pb-md-4">
+				<section className="sidenav-enabled pb-3 pb-md-4" style={{minHeight:"90vh"}}>
 					<Header/>
 					<ErrorBoundary>
 						<Suspense fallback={<p>Loading...</p>}>
@@ -35,6 +35,7 @@ const HODBody = (props) => {
 						</Suspense>
 					</ErrorBoundary>
 				</section>
+				<p className="text-center copyright" style={{fontSize:"14px"}}>Powered by <span className="text-success">TETfund</span></p>
 			</div>
 		</>
 	)

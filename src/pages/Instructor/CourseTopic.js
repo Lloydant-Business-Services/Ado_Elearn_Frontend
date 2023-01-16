@@ -74,16 +74,15 @@ class InstructorCourseTopic extends Component {
 			
 			return;
 		}
-		
-		if (this.state.newContentNote && this.state.newContentNote.size > 1024000) {
-			this.setState({error: true, errorMessage: "File size cannot exceed 1MB"});
+		//console.log(this.state.newContentNote.size, "size")
+		if (this.state.newContentNote && this.state.newContentNote.size > 10000000) {
+			this.setState({error: true, errorMessage: "File size cannot exceed 10MB"});
 			
 			setTimeout(() => {
 				this.setState({error: false, errorMessage: ""});
 			}, 3000);
 			return;
 		}
-		
 		this.setState({newContentLoading: true, success: false, error: false});
 		
 		let ContentProps = new FormData;
@@ -102,8 +101,8 @@ class InstructorCourseTopic extends Component {
 			ContentProps.append("StreamLink", this.state.newContentStreamLink);
 		}
 		
-		console.log(ContentProps);
 		
+		console.log(this.state.newContentNote);
 		Endpoint.createTopicContent(ContentProps)
 			.then((res) => {
 				console.log(res);

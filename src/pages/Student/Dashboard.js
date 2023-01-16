@@ -10,6 +10,7 @@ import {Line} from 'react-chartjs-2';
 import {Link} from "react-router-dom";
 import moment from "moment";
 import Spinner from '../Front/Spinner';
+import {Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 
 
 class StudentDashboard extends Component {
@@ -38,23 +39,49 @@ class StudentDashboard extends Component {
 				}
 			]
 		},
+		user: JSON.parse(localStorage.getItem('user'))
 		
 	};
-	
-	loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
-		style: {
-			border: '1px solid #DC2626',
-			padding: '16px',
-			background: '#DC2626',
-			color: '#fff',
-			borderRadius: '3rem',
-		},
-		iconTheme: {
-			primary: '#FFFAEE',
-			secondary: '#DC2626',
-		},
-	});
-	
+
+	loadUserData = () => {
+		Endpoint.getUserProfile(this.state.user?.userId)
+			.then((res) => {
+				this.setState({
+					profile: res.data,
+				});
+				localStorage.setItem("ELearnUserProfilre", JSON.stringify(res.data))
+				// this.setState({pageLoading: false,});
+				console.log(res.data);
+				
+			})
+			.catch((error) => {
+				
+				this.setState({pageLoading: false});
+			});
+	}
+	loadDataError = (error) => {
+
+		
+	};
+	// loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
+	// 	style: {
+	// 		border: '1px solid #DC2626',
+	// 		padding: '16px',
+	// 		background: '#DC2626',
+	// 		color: '#fff',
+	// 		borderRadius: '3rem',
+	// 	},
+	// 	iconTheme: {
+	// 		primary: '#FFFAEE',
+	// 		secondary: '#DC2626',
+	// 	},
+	// });
+	toggleRoleDrawer = () => {
+		console.log("gfch")
+		this.setState({
+			openRoleDrawer: !this.state.openRoleDrawer
+		})
+	}
 	loadDataFromServer = () => {
 		let user = JSON.parse(localStorage.getItem('user'));
 		if (user.fullName) {
@@ -119,6 +146,7 @@ class StudentDashboard extends Component {
 	
 	componentDidMount() {
 		this.loadDataFromServer();
+		this.loadUserData()
 	}
 	
 	render() {
@@ -135,13 +163,87 @@ class StudentDashboard extends Component {
 					position="top-center"
 					reverseOrder={false}
 				/>
-				
+					<Modal isOpen={this.state.openRoleDrawer} toggle={this.toggleRoleDrawer} className="mt-5 md">
+					<form onSubmit={(e) => this.createSession(e)}>
+						<ModalHeader toggle={this.toggleNewSession}>
+							<span className="h2">Login as:</span>
+						</ModalHeader>
+						
+						<ModalBody>
+						<div className='row'>
+						<div className='col-sm-12 '>
+						<Link to="/schooladmin/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									School Admin &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+							<div className='col-sm-12 mt-3'>
+							<Link to="/hod/dashboard">
+
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Department Administrator &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+						
+							<div className='col-sm-12 mt-3'>
+							<Link to="/instructor/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Instructor &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+
+							<div className='col-sm-12 mt-3'>
+							<Link to="/student/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Student &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+
+						</div>
+						</ModalBody>
+						
+						{/* <ModalFooter>
+							<button className="btn btn-primary">
+								Add Session
+								{
+									this.state.newSessionLoading ?
+										<span className="ml-2">
+											<ClipLoader size={20} color={"#fff"}
+														Loading={this.state.newSessionLoading}/>
+										</span>
+										:
+										null
+								}
+							</button>
+							
+							<button type="button" className="btn btn-danger" onClick={this.toggleNewSession}>Close</button>
+						</ModalFooter> */}
+					</form>
+				</Modal>
 				<div className="container-fluid py-5">
-					<h1 className="mb-3 text-primary" style={{fontSize:"21px"}}>
-						<Unicons.UilApps size="24" className="mr-2"/>
-						Dashboard
-					</h1>
 					
+					<div className='row'>
+				
+				<div className='col-sm-12 col-lg-10'>
+						<h2 className="mb-3 text-primary">
+						<Unicons.UilApps size="24" className="mr-2"/>
+						Student Dashboard
+						</h2>
+					</div>
+					{this.state.user?.roleName == "School Admin" ? <div className='col-sm-12 col-lg-2'>
+						<h1 className="mb-3 text-primary">
+						<button onClick={this.toggleRoleDrawer} className='btn btn-primary'>Switch Role &nbsp;<i className='fa fa-angle-down'/></button>
+						</h1>
+					</div> : null}
+				</div>
 					<div className="row mb-5">
 						<div className="col-12 col-sm-6 col-xl-3">
 							<div className="card illustration flex-fill">

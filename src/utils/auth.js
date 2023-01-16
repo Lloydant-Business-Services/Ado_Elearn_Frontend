@@ -30,7 +30,7 @@ export function loadUserInfo() {
 export function getUser(key, defaultValue = null) {
     //Get user details from redux (recommended)
     // let data = reduxState(stateKeys.USER)
-    // //or
+    // or
     // //Local/Session storage
     const userData = getActiveStore().getItem(stateKeys.USER);
     let data = userData ? JSON.parse(userData) : null;
@@ -60,6 +60,7 @@ export function loginUser(token, user, redirect) {
 
     if (redirect) {
         const intended = rememberRoute();
+        console.log(intended,"intet")
         if (intended) {
             window.location = intended;
         } else if (user.roleName &&
@@ -77,7 +78,16 @@ export function loginUser(token, user, redirect) {
         } else if (user.roleName &&
             (user.roleName === userType.student)) {
             window.location = "/student/dashboard";
-        } else {
+        } 
+        else if (user.roleName &&
+            (user.roleName === userType.subAdmin)) {
+            window.location = "/subadmin/dashboard";
+        }
+        else if (user.roleName &&
+            (user.roleName === userType.serviceAdmin)) {
+            window.location = "/serviceadmin/dashboard";
+        }
+        else {
             window.location = "/login";
         }
     }
@@ -97,6 +107,8 @@ export function logOutUser(redirect) {
     localStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(stateKeys.USER);
+    localStorage.removeItem(stateKeys.PROFILE_ALT);
+    sessionStorage.removeItem(stateKeys.PROFILE_ALT);
     sessionStorage.removeItem(stateKeys.USER);
 
     window.location = redirect ? redirect : '/login';

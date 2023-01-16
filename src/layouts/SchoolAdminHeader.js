@@ -166,7 +166,7 @@ const SchoolAdminHeader = (props) => {
             {/* Divider */}
 
             {/* Navigation */}
-            <Nav className="mt-md-4 mb-md-3" navbar style={{zIndex:"999"}}>
+            <Nav className="mt-md-4 mb-md-3" navbar style={{ zIndex: "999" }}>
               <NavItem>
                 <NavLink href="/schooladmin/dashboard">
                   <Unicons.UilApps size="20" /> &nbsp; Dashboard
@@ -207,12 +207,16 @@ const SchoolAdminHeader = (props) => {
                     </NavLink>
 
                     <NavLink to="/schooladmin/instructors" tag={Link}>
-                      Instructors
+                      Lecturers
                     </NavLink>
 
                     <NavLink to="/schooladmin/students" tag={Link}>
                       Students
                     </NavLink>
+                    <NavLink to="/schooladmin/subadmins" tag={Link}>
+                      Sub-admins
+                    </NavLink>
+                   
                   </ul>
                 </div>
               </li>
@@ -241,7 +245,7 @@ const SchoolAdminHeader = (props) => {
                 >
                   <ul className="nav-sm flex-column nav">
                     <NavLink to="/schooladmin/instructorreport" tag={Link}>
-                      Instructors
+                      Lecturers
                     </NavLink>
 
                     <NavLink to="/schooladmin/studentreport" tag={Link}>
@@ -257,11 +261,10 @@ const SchoolAdminHeader = (props) => {
                   </ul>
                 </div>
               </li>
-              
-              
+
               <NavItem>
                 <NavLink href="/schooladmin/audits">
-                <Unicons.UilFileAlt size="20" /> &nbsp; Audits
+                  <Unicons.UilFileAlt size="20" /> &nbsp; Audits
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -269,11 +272,10 @@ const SchoolAdminHeader = (props) => {
                   <Unicons.UilSignout size="20" /> &nbsp; Logout
                 </NavLink>
               </NavItem>
-
-
             </Nav>
-            <h3 className='triggerRotate' style={{marginLeft:"0px"}}>Online Learning</h3>
-
+            <h3 className="triggerRotate" style={{ marginLeft: "0px" }}>
+              Online Learning
+            </h3>
           </Collapse>
         </Container>
       </Navbar>
@@ -308,7 +310,7 @@ const SchoolAdminHeader = (props) => {
                     <h6 className="text-overflow m-0">Welcome!</h6>
                   </DropdownItem>
 
-                  <DropdownItem  to="/schooladmin/profile" tag={Link} >
+                  <DropdownItem to="/schooladmin/profile" tag={Link}>
                     <i className="ni ni-single-02" />
                     <span>My profile</span>
                   </DropdownItem>

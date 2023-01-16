@@ -197,7 +197,7 @@ class HODInstructors extends Component {
 					<div className="d-flex flex-wrap justify-content-between">
 						<h1 className="mb-3 mr-2 text-primary my-auto">
 							<Unicons.UilBookAlt size="26" className="mr-2"/>
-							Instructors
+							Lecturers
 						</h1>
 						
 						{/* <button className="btn btn-primary" onClick={this.openNewInstructor}>

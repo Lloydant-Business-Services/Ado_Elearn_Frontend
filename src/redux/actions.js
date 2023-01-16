@@ -19,6 +19,9 @@ export const stateKeys = {
     CART: '__cart',
     USER: 'user',
     TOAST: '__toast',
+    PROFILE_ALT: 'ELearnUserProfilre',
+
+    
 };
 
 

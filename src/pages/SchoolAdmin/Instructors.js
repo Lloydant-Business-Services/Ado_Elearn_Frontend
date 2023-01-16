@@ -83,7 +83,7 @@ class SchoolAdminInstructors extends Component {
 						<div className="d-flex">
 							<h1 className="mb-3 mr-2 text-primary my-auto">
 								<Unicons.UilBookAlt size="26" className="mr-2"/>
-								Instructors
+								Lecturers
 							</h1>
 							
 							<a className="mb-0 my-auto"
@@ -94,7 +94,7 @@ class SchoolAdminInstructors extends Component {
 								<Unicons.UilInfoCircle size="22" className="mr-2"/>
 							</a>
 							<ReactTooltip id="main" type="dark" effect="float" place="right">
-								<span>Select a department to add instructors to.</span>
+								<span>Select a department to add Lecturers to.</span>
 							</ReactTooltip>
 						</div>
 					</div>

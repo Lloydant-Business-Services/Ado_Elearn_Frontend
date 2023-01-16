@@ -43,14 +43,14 @@ class SchoolAdminFaculties extends Component {
 		this.setState({newFaculty: true})
 	};
 
-	toggleEditFaculty = () => {
-		this.setState({editFaculty: !this.state.editFaculty})
+	toggleEditFaculty = (data) => {
+		this.setState({editingFacultyName:data.name, editingFacultyId: data.id, editFaculty: !this.state.editFaculty})
 	};
 	closeEditFaculty = () => {
 		this.setState({editFaculty: false})
 	};
 	
-	newFacultySuccess = () => toast.success("Faculty added successfully", {
+	newFacultySuccess = () => toast.success("School added successfully", {
 		style: {
 			border: '1px solid #56b39d',
 			padding: '16px',
@@ -64,7 +64,7 @@ class SchoolAdminFaculties extends Component {
 		},
 	});
 	
-	editFacultySuccess = () => toast.success("Faculty edited successfully", {
+	editFacultySuccess = () => toast.success("School edited successfully", {
 		style: {
 			border: '1px solid #56b39d',
 			padding: '16px',
@@ -174,7 +174,7 @@ class SchoolAdminFaculties extends Component {
 		
 		const editFacultyProps = {
 			name: this.state.editingFacultyName,
-			id: this.state.editingFaculty.id,
+			id: this.state.editingFacultyId,
 		};
 		
 		Endpoint.editFaculty(editFacultyProps)
@@ -261,15 +261,17 @@ class SchoolAdminFaculties extends Component {
 									<Unicons.UilEditAlt size="19"/> Edit
 								</button> */}
 						
-								{faculty.active ? <button className="btn btn-sm btn-outline-danger"
+								 <button className="btn btn-sm btn-outline-danger"
 										onClick={() => {this.toggleDeleteFaculty(faculty?.id)}}>
-									<Unicons.UilTrashAlt size="19"/> Deactivate
-								</button> : 
+									<Unicons.UilTrashAlt size="19"/> Delete
+								</button> 
 								
-								<button className="btn btn-sm btn-outline-success"
-										onClick={() => {this.toggleDeleteFaculty(faculty?.id)}}>
-									<Unicons.UilTrashAlt size="19"/> Activate
-								</button>}
+								<button className="btn btn-sm btn-outline-primary"
+										onClick={() => {this.toggleEditFaculty(faculty)}}>
+									<i className='fa fa-edit'/> Edit
+								</button>
+
+								
 							</div>
 						
 					}
@@ -438,13 +440,13 @@ class SchoolAdminFaculties extends Component {
 				<Modal isOpen={this.state.editFaculty} toggle={this.toggleEditFaculty} className="mt-5 md">
 					<form onSubmit={(e) => this.editFaculty(e)}>
 						<ModalHeader toggle={this.toggleEditFaculty}>
-							<span className="h2">Edit Faculty Name</span>
+							<span className="h2">Edit School Name</span>
 						</ModalHeader>
 						
 						<ModalBody>
 							<div className="form-group">
 								<label className="mt-2 mr-2 ">
-									<b>Faculty Name:</b>
+									<b>School Name:</b>
 								</label>
 								
 								<div className="custom-form-alert">
@@ -452,7 +454,7 @@ class SchoolAdminFaculties extends Component {
 										<div
 											className="bg-danger border-rad-full text-center p-2 mb-3 custom-form-alert">
 											<p className="small text-white mb-0">
-												<Unicons.UilExclamationCircle size="20"/> Please enter a new faculty
+												<Unicons.UilExclamationCircle size="20"/> Please enter a new school
 												name.
 											</p>
 										</div>
@@ -480,7 +482,7 @@ class SchoolAdminFaculties extends Component {
 						
 						<ModalFooter>
 							<button className="btn btn-primary">
-								Edit Faculty
+								Edit School
 								{
 									this.state.editFacultyLoading ?
 										<span className="ml-2">

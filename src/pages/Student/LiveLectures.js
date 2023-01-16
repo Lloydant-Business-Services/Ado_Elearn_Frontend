@@ -21,20 +21,23 @@ class StudentLiveLectures extends Component {
 		courseLecturesModal: false,
 		currentCourseLectures: [],
 	};
-	
-	loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
-		style: {
-			border: '1px solid #DC2626',
-			padding: '16px',
-			background: '#DC2626',
-			color: '#fff',
-			borderRadius: '3rem',
-		},
-		iconTheme: {
-			primary: '#FFFAEE',
-			secondary: '#DC2626',
-		},
-	});
+	loadDataError = (error) => {
+
+		
+	};
+	// loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
+	// 	style: {
+	// 		border: '1px solid #DC2626',
+	// 		padding: '16px',
+	// 		background: '#DC2626',
+	// 		color: '#fff',
+	// 		borderRadius: '3rem',
+	// 	},
+	// 	iconTheme: {
+	// 		primary: '#FFFAEE',
+	// 		secondary: '#DC2626',
+	// 	},
+	// });
 	
 	handleCourseLectures = (course) => {
 		this.setState({pageLoading: true, currentCourse: course, courseLecturesModal: true});

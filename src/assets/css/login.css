@@ -1,40 +1,61 @@
 body {
-    font-family: "Roboto", sans-serif;
-    background-color: #fff!important; }
-  
-  p {
-    /* color: #b3b3b3; */
-    font-weight: 300; 
+  font-family: "Roboto", sans-serif;
+  background-color: #fff !important;
+}
+
+p {
+  /* color: #b3b3b3; */
+  font-weight: 300;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  /* font-family: "Roboto", sans-serif;  */
+}
+
+a {
+  -webkit-transition: 0.3s all ease;
+  -o-transition: 0.3s all ease;
+  transition: 0.3s all ease;
+}
+a:hover {
+  text-decoration: none !important;
+}
+
+.content {
+  padding: 7rem 0;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+.half,
+.half .container > .row {
+  height: 100vh;
+}
+
+@media (max-width: 991.98px) {
+  .half .bg {
+    height: 500px;
   }
-  
-  h1, h2, h3, h4, h5, h6,
-  .h1, .h2, .h3, .h4, .h5, .h6 {
-    /* font-family: "Roboto", sans-serif;  */
-  }
-  
-  a {
-    -webkit-transition: .3s all ease;
-    -o-transition: .3s all ease;
-    transition: .3s all ease; }
-    a:hover {
-      text-decoration: none !important; }
-  
-  .content {
-    padding: 7rem 0; }
-  
-  h2 {
-    font-size: 20px; }
-  
-  .half, .half .container > .row {
-    height: 100vh; }
-  
-  @media (max-width: 991.98px) {
-    .half .bg {
-      height: 500px; } }
-    
-  .half .contents, .half .bg {
-    width: 50%; }
-    /* @media (max-width: 1199.98px) {
+}
+
+.half .contents,
+.half .bg {
+  width: 50%;
+}
+/* @media (max-width: 1199.98px) {
       .half .contents, .half .bg {
         width: 100%; } }
     .half .contents .form-group, .half .bg .form-group {
@@ -119,16 +140,12 @@ body {
       background: #ea4335; }
       .social-login a.google:hover {
         background: #e82e1e; } */
-  
 
-
-
-
-
-        .half .bg {
-            background-size: cover;
-            background-position: center; }
-  /* .control {
+.half .bg {
+  background-size: cover;
+  background-position: center;
+}
+/* .control {
     display: block;
     position: relative;
     padding-left: 30px;
@@ -201,14 +218,14 @@ body {
   .control--checkbox input:disabled:checked ~ .control__indicator {
     background-color: #7e0cf5;
     opacity: .2; } */
-  
-  
-  
-    .login__bg{
-      background-image: url(../images/logImgg.jpg)!important;
-  }
 
-  @media (max-width: 600px) {
-    .half .contents, .half .bg {
-        width: 100%; }
-    }
+.login__bg {
+  background-image: url(../images/logImgg.jpeg) !important;
+}
+
+@media (max-width: 600px) {
+  .half .contents,
+  .half .bg {
+    width: 100%;
+  }
+}

@@ -16,20 +16,23 @@ class InstructorCourses extends Component {
 		
 		myCourses: [],
 	};
-	
-	loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
-		style: {
-			border: '1px solid #DC2626',
-			padding: '16px',
-			background: '#DC2626',
-			color: '#fff',
-			borderRadius: '3rem',
-		},
-		iconTheme: {
-			primary: '#FFFAEE',
-			secondary: '#DC2626',
-		},
-	});
+	loadDataError = (error) => {
+
+		
+	};
+	// loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
+	// 	style: {
+	// 		border: '1px solid #DC2626',
+	// 		padding: '16px',
+	// 		background: '#DC2626',
+	// 		color: '#fff',
+	// 		borderRadius: '3rem',
+	// 	},
+	// 	iconTheme: {
+	// 		primary: '#FFFAEE',
+	// 		secondary: '#DC2626',
+	// 	},
+	// });
 	
 	loadDataFromServer = () => {
 		let user = JSON.parse(localStorage.getItem('user'));

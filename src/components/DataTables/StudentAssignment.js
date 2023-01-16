@@ -6,19 +6,12 @@ import logo from "../../assets/images/home/logo.png";
 import * as Unicons from "@iconscout/react-unicons/index";
 import Spinner from "../../pages/Front/Spinner";
 import PulseLoader from "react-spinners/PulseLoader";
-import $ from "jquery"
-
-
-
-
-
-
+import $ from "jquery";
 
 export default class InstructorReportTable extends Component {
   state = {};
 
   exportPDF = () => {
-    
     const marginLeft = 20;
     let _this = this;
     if (typeof window !== "undefined") {
@@ -81,8 +74,7 @@ export default class InstructorReportTable extends Component {
         curMeridiem = objToday.getHours() > 12 ? "PM" : "AM";
       var today = dayOfMonth + " " + curMonth + ", " + curYear;
 
-    $("#exportReport").fadeIn()
-
+      $("#exportReport").fadeIn();
 
       doc.setFontSize(15);
       doc.setFont("Times New Roman");
@@ -115,8 +107,8 @@ export default class InstructorReportTable extends Component {
 
       const dora = bodyFoot.map((d) => [d.vc]);
 
-      const data = this.props?.assignmentList?.map((d,i) => [
-        i+1,
+      const data = this.props?.assignmentList?.map((d, i) => [
+        i + 1,
         d.courseCode,
         d.courseTitle,
         d.score,
@@ -126,10 +118,10 @@ export default class InstructorReportTable extends Component {
         startY: 220,
         head: headers,
         body: data,
-        theme:"grid",
-        headStyles:{
-            fillColor:'#473e92'
-         }
+        theme: "grid",
+        headStyles: {
+          fillColor: "#473e92",
+        },
       };
 
       let content2 = {
@@ -154,7 +146,7 @@ export default class InstructorReportTable extends Component {
       doc.setLineDash([20, 0], 10);
       doc.line(50, 135, 553, 135);
       doc.text("ASSIGNMENT REPORT", 60, 150);
-      doc.text(sessionSem + " Session",  350, 150);
+      doc.text(sessionSem + " Session", 350, 150);
       doc.setLineDash([20, 0], 10);
       doc.line(50, 155, 553, 155);
 
@@ -171,7 +163,7 @@ export default class InstructorReportTable extends Component {
 
       doc.autoTable(content2);
       setTimeout(() => {
-        $("#exportReport").fadeOut() 
+        $("#exportReport").fadeOut();
       }, 2000);
 
       doc.save("AssignmentReport.pdf");
@@ -179,28 +171,27 @@ export default class InstructorReportTable extends Component {
   };
 
   componentDidMount() {
-    $("#exportReport").fadeOut()
-
+    $("#exportReport").fadeOut();
   }
 
   render() {
     const data = {
       columns: [
         {
-            label: 'S/No',
-            field: 'sNo',
+          label: "S/No",
+          field: "sNo",
         },
         {
-            label: 'Course Code',
-            field: 'courseCode',
+          label: "Course Code",
+          field: "courseCode",
         },
         {
-            label: 'Course Title',
-            field: 'courseTitle',
+          label: "Course Title",
+          field: "courseTitle",
         },
         {
-            label: 'Score',
-            field: 'score',
+          label: "Score",
+          field: "score",
         },
       ],
       rows: this.props?.assignmentList,
@@ -208,15 +199,11 @@ export default class InstructorReportTable extends Component {
 
     return (
       <>
-       <div className="spin-back"  id="exportReport">
-						<div className="jumbotron jum2">
-							<PulseLoader
-								size={20}
-								color={"#440330"}
-								loading={true}
-							/>
-						</div>
-					</div>
+        <div className="spin-back" id="exportReport">
+          <div className="jumbotron jum2">
+            <PulseLoader size={20} color={"#440330"} loading={true} />
+          </div>
+        </div>
         <div>
           <hr className="my-2" />
 
@@ -236,10 +223,7 @@ export default class InstructorReportTable extends Component {
           </div>
 
           <div className="mt-3">
-            <button
-              className="btn btn-sm btn-primary"
-              onClick={this.exportPDF}
-            >
+            <button className="btn btn-sm btn-primary" onClick={this.exportPDF}>
               <Unicons.UilFileExport /> Export Report PDF
             </button>
 

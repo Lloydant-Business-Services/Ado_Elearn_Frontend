@@ -22,6 +22,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import $ from "jquery";
 import Typography from "@mui/material/Typography";
+import Chat from "../Common/Chat";
 
 class StudentCourse extends Component {
     state = {
@@ -29,6 +30,7 @@ class StudentCourse extends Component {
         thisCourse: [],
         courseTopics: [],
         allAssignments: [],
+        isChatActive: false
     };
 
     loadDataError = (error) =>
@@ -75,7 +77,7 @@ class StudentCourse extends Component {
 
 
 
-			Endpoint.getCourseAssignments(this.props.location.state.data.courseId)
+        Endpoint.getCourseAssignments(this.props.location.state.data.courseId)
             .then((res) => {
                 console.log(res.data);
                 this.setState({ pageLoading: false, allAssignments: res.data });
@@ -103,6 +105,18 @@ class StudentCourse extends Component {
             this.setState({ valueChange: data });
         }
     };
+    triggerChatInterFace = () => {
+        $("#general_section").hide()
+        $("#chat_section").fadeIn()
+        this.setState({
+            isChatActive: true
+        })
+    }
+    exitChatInterFace = () => {
+        $("#chat_section").hide()
+        $("#general_section").fadeIn()
+    }
+    
     componentDidMount() {
         this.loadDataFromServer();
     }
@@ -115,14 +129,36 @@ class StudentCourse extends Component {
                 {this.state.pageLoading ? <Spinner message={"Just a moment"} /> : null}
 
                 <Toaster position="top-center" reverseOrder={false} />
+                <div className="container-fluid py-5" id="chat_section" style={{ display: "none" }}>
+                    <div className="row">
+                        <div className="col-sm-12 col-lg-10">
+                            <h1 className="mb-3 text-primary">
+                                <Unicons.UilBookAlt size="24" className="mr-2" />
+                                {this.state.thisCourse?.courseCode + " - " + this.state.thisCourse?.courseTitle}
+                            </h1>
+                        </div>
 
-                <div className="container-fluid py-5">
-                    <h1 className="mb-3 text-primary">
-                        <Unicons.UilBookAlt size="24" className="mr-2" />
-                        {this.state.thisCourse?.courseCode + " - " + this.state.thisCourse?.courseTitle}
-                    </h1>
+                        <div className="col-sm-12 col-lg-2">
+                            <button onClick={this.exitChatInterFace} type="button" className="btn btn-primary">Exit Chat Room <i className="fa fa-sign-out" /></button>
+                        </div>
+                    </div>
 
                     <hr style={{ marginTop: "0rem" }} />
+                    <Chat chatStatus={this.state.isChatActive}/>
+                </div>
+                <div className="container-fluid py-5" id="general_section">
+                    <div className="row">
+                        <div className="col-sm-12 col-lg-10">
+                            <h1 className="mb-3 text-primary">
+                                <Unicons.UilBookAlt size="24" className="mr-2" />
+                                {this.state.thisCourse?.courseCode + " - " + this.state.thisCourse?.courseTitle}
+                            </h1>
+                        </div>
+
+                        <div className="col-sm-12 col-lg-2">
+                            <button type="button" onClick={this.triggerChatInterFace} className="btn btn-primary">Chat Room <i className="fa fa-commenting-o" /></button>
+                        </div>
+                    </div>
                     <div className="row">
                         <div className="col-lg-12">
                             <Radio.Group value={this.state.valueChange}>
@@ -236,7 +272,7 @@ class StudentCourse extends Component {
                                             </Card>
                                         </div>
 
-                                      
+
                                     </>
                                 );
                             })
@@ -246,7 +282,7 @@ class StudentCourse extends Component {
                     </div>
 
 
-					<div className="row" id="quizes" style={{ display: "none" }}>
+                    <div className="row" id="quizes" style={{ display: "none" }}>
                         <div className="col-sm-12">
                             <h2>Quizes</h2>
                             <hr className="my-2" />
@@ -292,7 +328,7 @@ class StudentCourse extends Component {
                                             </Card>
                                         </div>
 
-                                      
+
                                     </>
                                 );
                             })

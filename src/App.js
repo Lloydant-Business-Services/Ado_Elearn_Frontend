@@ -13,9 +13,11 @@ import {userType} from "./utils/Identifiers";
 import SuperAdminBody from "./layouts/SuperAdminBody";
 import SchoolAdminBody from "./layouts/SchoolAdminBody";
 import StudentBody from "./layouts/StudentBody";
+import SubAdminBody from "./layouts/SubAdminBody";
 import HODBody from "./layouts/HODBody";
 import InstructorBody from "./layouts/InstructorBody";
-import CompleteProfileContextProvider from "./contexts/CompleteProfileContext";
+import ServiceAdminBody from "./layouts/ServiceAdminBody";
+// import CompleteProfileContextProvider from "./contexts/CompleteProfileContext";
 
 export class App extends Component {
     render() {
@@ -26,14 +28,16 @@ export class App extends Component {
                         
                         <AuthRoute path="/admin" authorized={[userType.superadmin]} component={SuperAdminBody}/>
                         <AuthRoute path="/schooladmin" authorized={[userType.schooladmin]} component={SchoolAdminBody}/>
-                        <AuthRoute path="/hod" authorized={[userType.hod]} component={HODBody}/>
-                        <AuthRoute path="/instructor" authorized={[userType.instructor]} component={InstructorBody}/>
-                        <AuthRoute path="/student" authorized={[userType.student]} component={StudentBody}/>
+                        <AuthRoute path="/hod" authorized={[userType.hod, userType.schooladmin]} component={HODBody}/>
+                        <AuthRoute path="/instructor" authorized={[userType.instructor, userType.schooladmin]} component={InstructorBody}/>
+                        <AuthRoute path="/student" authorized={[userType.student, userType.schooladmin]} component={StudentBody}/>
+                        <AuthRoute path="/subadmin" authorized={[userType.subAdmin]} component={SubAdminBody}/>
+                        <AuthRoute path="/serviceadmin" authorized={[userType.serviceAdmin]} component={ServiceAdminBody}/>
                         
                         <Route component={FrontBody}/>
                     </Switch>
                     
-                    <CompleteProfileContextProvider/>
+                    {/* <CompleteProfileContextProvider/> */}
                     <PageLoader/>
                     <ToastContainer/>
                 </ScrollToTop>

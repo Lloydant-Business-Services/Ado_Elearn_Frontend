@@ -14,15 +14,18 @@ let fileHeaders = {
     token: localStorage.getItem("token"),
 };
 
-export const baseContentURL = "https://belearnng.lloydant.com/api";
+export const baseContentURL = "https://backendadoelearn.lloydant.com/api";
 
 const Endpoint = {
     init: () => {
         // accountId = process.env.REACT_APPg5b657_ACCOUNT_ID;
         let token = getUserToken();
-        if(token) axios.defaults.headers.common["Authorization"] = token
-        //axios.defaults.baseURL = "https://backendilaroelearning.lloydant.com/api";
-        axios.defaults.baseURL = "http://10.211.55.3/ELearnNG/api";
+        if (token) axios.defaults.headers.common["Authorization"] = token
+        axios.defaults.baseURL = "https://backendadoelearn.lloydant.com/api";
+        //axios.defaults.baseURL = "http://localhost/api";
+        //axios.defaults.baseURL = " https://localhost:44303/api";
+
+       
         // Intercept 401 HTTP Error code in API
         axios.interceptors.response.use(
             (response) => response,
@@ -30,7 +33,7 @@ const Endpoint = {
                 if (!error.response) {
                     //No response
                     // notify("Seems like you're offline, check internet connection")
-                } 
+                }
                 else if (
                     error.response &&
                     error.response.status === 401 &&
@@ -65,7 +68,7 @@ const Endpoint = {
     },
 
     editFaculty: (data) => {
-        return axios.put(`/FacultySchool`, data, headers);
+        return axios.post(`/FacultySchool/UpdateFacultySchool`, data, headers);
     },
 
     deleteFaculty: (id) => {
@@ -104,9 +107,9 @@ const Endpoint = {
 
     // ---Session & Semester--- //
     createSession: (data) => {
-        return axios.post(`/Session`, data, headers);
+        return axios.post(`/Session/AddSesion`, data, headers);
     },
-    
+
 
     createSemester: (data) => {
         return axios.post(`/Semster/AddSemester`, data, headers);
@@ -163,7 +166,20 @@ const Endpoint = {
             fileHeaders
         );
     },
-
+    addCoursesBulk: (data, userId) => {
+        return axios.post(
+            `Course/BulkCourseUpload?userId=${userId}`,
+            data,
+            fileHeaders
+        );
+    },
+    addInstructorsBulk: (data, id) => {
+        return axios.post(
+            `/SchoolAdmin/InstructorUpload?departmentId=${id}`,
+            data,
+            fileHeaders
+        );
+    },
     getAllStudents: () => {
         return axios.get(`/SchoolAdmin/GetAllStudents`, headers);
     },
@@ -209,6 +225,14 @@ const Endpoint = {
         );
     },
 
+    getStudentCoursesByDepartment: (data) => {
+        return axios.get(
+            `/Course/GetAllocatedCoursesByDepartmentAlt?departmentId=${data}`,
+            headers
+        );
+    },
+
+    
     createInstructorandHod: (data) => {
         return axios.post(
             `/InstructorHod/AddCourseInstructorAndHod`,
@@ -226,10 +250,10 @@ const Endpoint = {
     },
     modifyCourseTopic: (topicId, data) => {
         return axios.post(
-            `CourseMaterial/EditCourseTopic?TopicId=${topicId}`,data, headers
+            `CourseMaterial/EditCourseTopic?TopicId=${topicId}`, data, headers
         );
     },
-    
+
     getRegisteredCourses: (data) => {
         return axios.get(
             `/CourseRegistration/GetRegisteredCourses?personId=${data.personId}&sessionSemesterId=${data.sessionSemesterId}`,
@@ -240,7 +264,10 @@ const Endpoint = {
     createCourseTopic: (data) => {
         return axios.post(`/CourseMaterial/CreateCourseTopic`, data, headers);
     },
-
+    transferCourseMaterial: (contentId, newTopicId) => {
+        return axios.post(`/CourseMaterial/ImportCourseMaterialByTopic?contentId=${contentId}&newTopicId=${newTopicId}`, headers);
+    },
+    
     getCourseTopics: (data) => {
         console.log(data, 'data===')
         return axios.get(
@@ -249,13 +276,26 @@ const Endpoint = {
         );
     },
 
+    getCourseTopicsByInstructor: (data) => {
+        console.log(data, 'data===')
+        return axios.get(
+            `/CourseMaterial/GetCourseTopicByInstructor?userId=${data}`,
+            headers
+        );
+    },
     getTopicContent: (data) => {
         return axios.get(
             `/CourseMaterial/GetContentByTopic?TopicId=${data}`,
             headers
         );
     },
-
+    getAllTopicContentByInstructor: (data) => {
+        return axios.get(
+            `/CourseMaterial/GetCourseMaterialByInstructorId?InstructorId=${data}`,
+            headers
+        );
+    },
+    
     createTopicContent: (data) => {
         return axios.post(`/CourseMaterial/CreateCourseContent`, data, fileHeaders);
     },
@@ -274,60 +314,60 @@ const Endpoint = {
     registerCoursesInBulk: (data) => {
         return axios.post(`/CourseRegistration/RegisterCoursesBulk`, data, headers);
     },
-//Quiz
+    //Quiz
 
-createQuiz: (data) => {
-    return axios.post(`/Quiz/CreateQuiz`, data, fileHeaders);
-},
-getCourseQuiz: (data) => {
-    console.log(data, 'data===')
-    return axios.get(
-        `/Quiz/ListQuizByCourseId?courseId=${data}`,
-        headers
-    );
-},
+    createQuiz: (data) => {
+        return axios.post(`/Quiz/CreateQuiz`, data, fileHeaders);
+    },
+    getCourseQuiz: (data) => {
+        console.log(data, 'data===')
+        return axios.get(
+            `/Quiz/ListQuizByCourseId?courseId=${data}`,
+            headers
+        );
+    },
 
-getQuiz: (data) => {
-    return axios.get(
-        `/Quiz/GetQuizByQuizId?QuizId=${data}`,
-        headers
-    );
-},
+    getQuiz: (data) => {
+        return axios.get(
+            `/Quiz/GetQuizByQuizId?QuizId=${data}`,
+            headers
+        );
+    },
 
-getQuizSubmissions: (data) => {
-    return axios.get(
-        `/Quiz/GetAllQuizSubmissionByAssignemntId?QuizId=${data}`,
-        headers
-    );
-},
-getCourseQuiz: (data) => {
-    console.log(data, 'data===')
-    return axios.get(
-        `/Quiz/ListQuizByCourseId?courseId=${data}`,
-        headers
-    );
-},
-getStudentQuizSubmission: (data) => {
-    return axios.get(
-        `/Quiz/GetQuizSubmissionBy?QuizId=${data.assignmentId}&StudentUserId=${data.studentId}`,
-        headers
-    );
-},
-submitStudentQuiz: (data) => {
-    return axios.post(`/Quiz/SubmitStudentQuiz`, data, fileHeaders);
-},
-getQuizSubmissionById: (data) => {
-    return axios.get(
-        `/Quiz/GetQuizSubmissionById?QuizSubmissionId=${data}`
-    );
-},
-gradeQuizSubmission: (data) => {
-    return axios.post(`/Quiz/GradeQuiz`, data, headers);
-},
+    getQuizSubmissions: (data) => {
+        return axios.get(
+            `/Quiz/GetAllQuizSubmissionByAssignemntId?QuizId=${data}`,
+            headers
+        );
+    },
+    getCourseQuiz: (data) => {
+        console.log(data, 'data===')
+        return axios.get(
+            `/Quiz/ListQuizByCourseId?courseId=${data}`,
+            headers
+        );
+    },
+    getStudentQuizSubmission: (data) => {
+        return axios.get(
+            `/Quiz/GetQuizSubmissionBy?QuizId=${data.assignmentId}&StudentUserId=${data.studentId}`,
+            headers
+        );
+    },
+    submitStudentQuiz: (data) => {
+        return axios.post(`/Quiz/SubmitStudentQuiz`, data, fileHeaders);
+    },
+    getQuizSubmissionById: (data) => {
+        return axios.get(
+            `/Quiz/GetQuizSubmissionById?QuizSubmissionId=${data}`
+        );
+    },
+    gradeQuizSubmission: (data) => {
+        return axios.post(`/Quiz/GradeQuiz`, data, headers);
+    },
 
-publishQuizScores: (data) => {
-    return axios.post(`/Quiz/PublishResultQuiz`, data, headers);
-},
+    publishQuizScores: (data) => {
+        return axios.post(`/Quiz/PublishResultQuiz`, data, headers);
+    },
     // Assignments
     createAssignment: (data) => {
         return axios.post(`/Assignment/CreateAssignment`, data, fileHeaders);
@@ -436,14 +476,26 @@ publishQuizScores: (data) => {
             headers
         );
     },
+    getAllInstructors: () => {
+        return axios.get(
+            `/InstructorHod/GetAllInstructors`,
+            headers
+        );
+    },
 
+    
     getAllocatedCoursesByDepartment: (data) => {
         return axios.get(
             `/Course/GetAllocatedCoursesByDepartment?departmentId=${data}`,
             headers
         );
     },
-
+    getAllocatedServiceCourses: (data) => {
+        return axios.get(
+            `/Course/GetAllocatedServiceCourses`,
+            headers
+        );
+    },
     
 
     createInstructor: (data) => {
@@ -491,7 +543,7 @@ publishQuizScores: (data) => {
     removeSubInstructor: (data) => {
         return axios.post(`SubInstructor/DeleteSubInstructor?Id=${data}`, headers);
     },
-//Email Notifications
+    //Email Notifications
     getEmailNotifications: (data) => {
         return axios.get(
             `User/GetNotificationTrackersByUserId?userId=${data}`,
@@ -509,14 +561,14 @@ publishQuizScores: (data) => {
             headers
         );
     },
-    
+
     // Live Lectures
     createLecture: (data) => {
         return axios.post(`/LiveLecture/CreateMeeting`, data, headers);
     },
 
     deleteLiveLecture: (data) => {
-        console.log(data,  "dataaa=====")
+        console.log(data, "dataaa=====")
         return axios.post(`/LiveLecture/DeleteLiveLecture?LiveLectureId=${data}`, headers);
     },
 
@@ -566,7 +618,7 @@ publishQuizScores: (data) => {
             headers
         );
     },
-    
+
     getAllAssignments: (data) => {
         return axios.get(
             `/Reporting/ComprehensiveAssignmentReport?courseId=${data.courseId}&SessionSemesterId=${data.sessionSemesterId}&departmentId=${data.departmentId}`,
@@ -595,14 +647,30 @@ publishQuizScores: (data) => {
     updateTransaction: (data) => {
         return axios.post(`/Payment/UpdatePayment?reference=${data}`, headers);
     },
-   
+
     addSingleStudent: (departmentId, data) => {
-        return axios.post(`/SchoolAdmin/AddSingleStudent?departmentId=${departmentId}`,data, headers);
+        return axios.post(`/SchoolAdmin/AddSingleStudent?departmentId=${departmentId}`, data, headers);
     },
     deactivateStudent: (data) => {
         return axios.post(`/SchoolAdmin/DeleteStudent?studentPersonId=${data}`, headers);
     },
+
+    getAllSubAdmins: () => {
+        return axios.get(`/User/GetAllSubAdmins`, headers);
+    },
+    delegateAdmin: (userId, taskId) => {
+        return axios.post(`/User/DelegateTaskToSubAdmin?userId=${userId}&task=${taskId}`, headers);
+    },
     
+    revokeTask: (delegationId) => {
+        return axios.post(`/User/RevokeAdminDelegation?delegationId=${delegationId}`, headers);
+    },
+    modifySemester: (semesterId, semesterName) => {
+        return axios.post(`/Semster/ModifySemester?semesterId=${semesterId}&semesterName=${semesterName}`, headers);
+    },
+    modifySession: (sessionId, sessionName) => {
+        return axios.post(`/Session/ModifySession?sessionId=${sessionId}&sessionName=${sessionName}`, headers);
+    },
 };
 
 export default Endpoint;

@@ -71,6 +71,21 @@ class StudentQuiz extends Component {
 			secondary: '#FFCC00',
 		},
 	});
+
+	assignmentTimeElapsed = (msg) => toast.success(msg, {
+		style: {
+			border: '1px solid #56b39d',
+			padding: '16px',
+			background: '#FFCC00',
+			color: '#000',
+			borderRadius: '2rem',
+		},
+		iconTheme: {
+			primary: '#000',
+			secondary: '#FFCC00',
+		},
+		duration: 10000
+	});
 	
 	submissionFileSelect = (e) => {
 		this.setState({submissionFile: e.target.files[0]});
@@ -133,7 +148,12 @@ class StudentQuiz extends Component {
 				console.log(SubmissionProps);
 				if (res.data.statusCode === 208) {
 					this.assignmentPublished();
-				} else {
+				}
+				if (res.data.statusCode === 400) {
+					this.assignmentTimeElapsed(res.data.message);
+					this.setState({submissionLoading: false, })
+				} 
+				else {
 					this.setState({submissionLoading: false, promptSubmit: false});
 					this.submissionSuccess();
 					
@@ -176,7 +196,7 @@ class StudentQuiz extends Component {
 		let user = JSON.parse(localStorage.getItem('user'));
 		this.setState({pageLoading: true, user: user, thisAssignment: this.props.location.state.data});
 		
-		console.log(this.props.location.state.data);
+		console.log(this.props.location.state.data, "prop");
 		let queryProps = {
 			assignmentId: this.props.location.state.data.quizId,
 			studentId: user.userId
@@ -195,9 +215,12 @@ class StudentQuiz extends Component {
 				this.setState({pageLoading: false, })
 			});
 	};
+
 	
 	componentDidMount() {
 		this.loadDataFromServer()
+	
+
 	}
 	
 	render() {
@@ -226,9 +249,9 @@ class StudentQuiz extends Component {
 							<div className="card bg-custom-light">
 								<div className="card-body">
 									<p className="mb-3">
-										<span className="font-weight-600">Instructions: </span>
+										<span className="font-weight-600">Question: </span>
 										<span className="small">
-											Answer All
+										{this.state.thisAssignment.quizName}
 										</span>
 									</p>
 									

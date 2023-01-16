@@ -18,7 +18,7 @@ import Spinner from "../Front/Spinner"
 class HODCourses extends Component {
 	state = {
 		pageLoading: false,
-		
+		deptId:0,
 		allCourses: [],
 		newCourse: false,
 		newCourseFormIncomplete: false,
@@ -37,7 +37,8 @@ class HODCourses extends Component {
 		currentCourseSubInstructors: [],
 		
 		subInstructorsLoading: false,
-		profileProps: JSON.parse(localStorage.getItem('ELearnUserProfilre'))
+		profileProps: JSON.parse(localStorage.getItem('ELearnUserProfilre')),
+		deptId:JSON.parse(localStorage.getItem('ELearnUserProfilre')).department.id
 	};
 	
 	assignCourseSuccess = () => toast.success("Course allocated successfully", {
@@ -168,19 +169,27 @@ class HODCourses extends Component {
 	};
 	
 	toggleAssignCourse = () => {
-		this.setState({assignCourse: !this.state.assignCourse})
+		this.setState({assignCourse: !this.state.assignCourse, allocationTarget:false})
 	};
-	
+	toggleAssignCourseAlt = () => {
+		this.setState({assignCourseAlt: !this.state.assignCourseAlt, allocationTarget:false})
+	};
 	openAssignCourse = () => {
 		this.setState({assignCourse: true})
 	};
-	
+	triggerAllocationTarget = () => {
+		this.setState({allocationTarget: !this.state.allocationTarget})
+	};
 	setAssignCourseId = (e) => {
 		if (e) {
 			this.setState({assignCourseId: e.value});
 		}
 	};
-	
+	setDepartmentId = (e) => {
+		if (e) {
+			this.setState({deptId: e.value});
+		}
+	};
 	setAssignInstructorId = (e) => {
 		if (e) {
 			this.setState({assignInstructorId: e.value});
@@ -192,7 +201,9 @@ class HODCourses extends Component {
 			this.setState({addSubInstructorId: e.value});
 		}
 	};
-	
+	openNewStudents = () => {
+		this.setState({ newStudents: true });
+	  };
 	createCourse = (e) => {
 		e.preventDefault();
 		
@@ -256,6 +267,8 @@ class HODCourses extends Component {
 			courseId: this.state.assignCourseId,
 			instructorId: this.state.assignInstructorId,
 			levelId: parseInt(this.state.assignLevelId),
+			departmentId: parseInt(this.state.deptId),
+			
 		};
 		console.log(assignCourseProps);
 		
@@ -280,11 +293,64 @@ class HODCourses extends Component {
 				this.setState({pageLoading: false, assignCourseLoading: false});
 			})
 	};
+	bulkAddCourses = (e) => {
+		e.preventDefault();
 	
+		if (!this.state.studentFile) {
+		  this.setState({ newStudentFormIncomplete: true });
+	
+		  setTimeout(() => {
+			this.setState({ newStudentFormIncomplete: false });
+		  }, 3000);
+	
+		  return;
+		}
+	
+		this.setState({ newStudentsLoading: true, success: false, error: false });
+	
+		const studentProps = new FormData();
+		studentProps.append("file", this.state.studentFile);
+	
+		//const id = this.state.thisDepartment.id;
+		Endpoint.addCoursesBulk(studentProps, this.state.profileProps?.userId).then((res) => {
+		  console.log(res.data);
+		  if (res.status === 200) {
+			this.setState({
+			  error: false,
+			  success: true,
+			  newStudents: false,
+			  newStudentsLoading: false,
+			  studentFile: null,
+			});
+	
+			this.newStudentsSuccess();
+	
+			setTimeout(() => {
+			  this.loadDataFromServer();
+			}, 2000);
+		  }
+		});
+	  };
+	  newStudentsSuccess = () =>
+	  toast.success("Courses uploaded successfully", {
+		style: {
+		  border: "1px solid #56b39d",
+		  padding: "16px",
+		  background: "#56b39d",
+		  color: "#fff",
+		  borderRadius: "2rem",
+		},
+		iconTheme: {
+		  primary: "#FFFAEE",
+		  secondary: "#56b39d",
+		},
+	  });
 	toggleNewSubInstructor = () => {
 		this.setState({newSubInstructor: !this.state.newSubInstructor});
 	};
-	
+	studentFileSelect(e) {
+		this.setState({ studentFile: e.target.files[0] });
+	  }
 	addNewSubInstructor = (e) => {
 		e.preventDefault();
 		if (!this.state.addSubInstructorId || !this.state.newSubInstructorCourseId) {
@@ -377,15 +443,16 @@ class HODCourses extends Component {
 				
 				Endpoint.getAllocatedCoursesByDepartment(res.data.department.id)
 					.then((res) => {
-						// console.log(res.data);
+					 console.log(res.data);
 						this.setState({departmentCourses: res.data, pageLoading: false});
-						
+						let user = JSON.parse(localStorage.getItem('ELearnUserProfilre'));
 						let mappedData = res.data.map((course, i) => {
 							return{
 								sNo: i + 1,
 								title: <span searchvalue={course.courseTitle} className="capital">{course.courseTitle}</span>,
 								code: course.courseCode,
 								lecturer: course.courseLecturer,
+								deptName: course.departmentName ? course.departmentName : user?.department?.name,
 								actions:
 									<div>
 										<button className="btn btn-sm btn-outline-primary" onClick={() => this.openNewSubInstructor(course)}>
@@ -418,6 +485,10 @@ class HODCourses extends Component {
 									field: 'lecturer',
 								},
 								{
+									label: 'Department',
+									field: 'deptName',
+								},
+								{
 									label: 'Actions',
 									field: 'actions',
 								},
@@ -434,7 +505,7 @@ class HODCourses extends Component {
 				
 			})
 			.catch((error) => {
-				this.loadDataError(error, this);
+				// this.loadDataError(error, this);
 				this.setState({pageLoading: false});
 			});
 		
@@ -452,6 +523,7 @@ class HODCourses extends Component {
 				this.setState({pageLoading: false});
 			});
 		
+			this.loadAllDepartments()
 		Endpoint.getAllLevels()
 			.then((res) => {
 				// console.log(res.data);
@@ -464,6 +536,24 @@ class HODCourses extends Component {
 		
 	};
 	
+
+	loadAllDepartments = () => {
+		Endpoint.getAllDepartments()
+		.then((res) => {
+			console.log(res.data, "Depts")
+			let depteObj = [];
+				for (let i=0; i<res.data.length; i++) {
+					let entry = {value: res.data[i].id, label: res.data[i].name };
+					depteObj.push(entry);
+				}
+			this.setState({
+				allDepts: depteObj
+			})
+		})
+		.catch((err) => {
+			console.log(err)
+		})
+	}
 	componentDidMount() {
 		this.loadDataFromServer();
 	}
@@ -482,7 +572,83 @@ class HODCourses extends Component {
 					position="top-center"
 					reverseOrder={false}
 				/>
-				
+				<Modal
+          isOpen={this.state.newStudents}
+          toggle={this.toggleNewStudents}
+          className="mt-5 md"
+        >
+          <form onSubmit={(e) => this.bulkAddCourses(e)}>
+            <ModalHeader toggle={this.toggleNewStudents}>
+              <span className="h2">Bulk Course Upload</span>
+            </ModalHeader>
+
+            <ModalBody>
+              <div className="form-group row">
+                <div className="col-md-12">
+                  <label className="mt-2 mr-2 ">
+                    <b>Course Excel File:</b>
+                  </label>
+
+                  <input
+                    id="students"
+                    type="file"
+                    className="form-control"
+                    accept=".xlsx"
+                    ref={(fileInput) => (this.fileInput = fileInput)}
+                    onChange={(e) => {
+                      this.studentFileSelect(e);
+                    }}
+                  />
+                </div>
+                <div>
+                  <p className="small ml-3 mt-2">Excel File format: (S/N, Course Title, Course Code)</p>
+                </div>
+
+                <div className="col-md-12">
+                  {this.state.newStudentFormIncomplete ? (
+                    <div className="bg-danger border-rad-full text-center p-2 my-3">
+                      <p className="small text-white mb-0">
+                        <Unicons.UilExclamationCircle size="20" /> Please select
+                        an excel file to upload.
+                      </p>
+                    </div>
+                  ) : null}
+
+                  {this.state.error ? (
+                    <div className="bg-danger border-rad-full text-center p-2 my-3">
+                      <p className="small text-white mb-0">
+                        <Unicons.UilBell size="20" /> {this.state.errorMessage}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </ModalBody>
+
+            <ModalFooter>
+              <button className="btn btn-primary">
+                Upload Course
+                {this.state.newStudentsLoading ? (
+                  <span className="ml-2">
+                    <ClipLoader
+                      size={20}
+                      color={"#fff"}
+                      Loading={this.state.newStudentsLoading}
+                    />
+                  </span>
+                ) : null}
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={this.toggleNewStudents}
+              >
+                Close
+              </button>
+            </ModalFooter>
+          </form>
+        </Modal>
 				<div className="container-fluid py-5">
 					<div className="d-flex flex-wrap justify-content-between">
 						<div>
@@ -506,12 +672,15 @@ class HODCourses extends Component {
 						</div>
 						
 						<div>
-							<button className="btn btn-outline-primary" onClick={this.openAssignCourse}>
+							<button className="btn btn-outline-primary" onClick={this.triggerAllocationTarget}>
 								<Unicons.UilUserCheck size="20"/> Allocate Instructor
 							</button>
 							
 							<button className="btn btn-primary mt-2 mt-md-0" onClick={this.openNewCourse}>
 								<Unicons.UilPlus size="20"/> New Course
+							</button>
+							<button className="btn btn-primary mt-2 mt-md-0" onClick={this.openNewStudents}>
+								<Unicons.UilPlus size="20"/> Course Bulk Upload
 							</button>
 						</div>
 					</div>
@@ -614,7 +783,35 @@ class HODCourses extends Component {
 						</ModalFooter>
 					</form>
 				</Modal>
-			
+				<Modal isOpen={this.state.allocationTarget} toggle={this.triggerAllocationTarget} className="mt-5 md" size="md">
+					{/* <form onSubmit={(e) => this.assignCourse(e)}> */}
+						<ModalHeader toggle={this.triggerAllocationTarget}>
+							{/* <span className="h2">Assign Course To Instructor</span> */}
+						</ModalHeader>
+						
+						<ModalBody>
+							<div className='container'>
+								<div className='row text-center'>
+									<div className='col-12'>
+									<button className='btn btn-outline-warning' style={{width:"100%"}} onClick={this.toggleAssignCourse}>Department Allocation</button>
+
+									</div>
+
+									<div className='col-12 mt-3'>
+									<button className='btn btn-outline-warning' style={{width:"100%"}} onClick={this.toggleAssignCourseAlt}>Allocation Outside Department</button>
+
+									</div>
+
+								</div>
+							</div>
+						</ModalBody>
+						<ModalFooter>
+
+						</ModalFooter>
+						
+					
+					{/* </form> */}
+				</Modal>
 				<Modal isOpen={this.state.assignCourse} toggle={this.toggleAssignCourse} className="mt-5 md" size="lg">
 					<form onSubmit={(e) => this.assignCourse(e)}>
 						<ModalHeader toggle={this.toggleAssignCourse}>
@@ -729,6 +926,144 @@ class HODCourses extends Component {
 							</button>
 							
 							<button type="button" className="btn btn-danger" onClick={this.toggleAssignCourse}>Close</button>
+						</ModalFooter>
+					</form>
+				</Modal>
+
+				<Modal isOpen={this.state.assignCourseAlt} toggle={this.toggleAssignCourseAlt} className="mt-5 md" size="lg">
+					<form onSubmit={(e) => this.assignCourse(e)}>
+						<ModalHeader toggle={this.toggleAssignCourseAlt}>
+							<span className="h2">Course Allocation (Others)</span>
+						</ModalHeader>
+						
+						<ModalBody>
+							<div className="form-group row">
+								<div className="col-md-6">
+									<label className="mt-2 mr-2 ">
+										<b>Select Course:</b>
+									</label>
+									<div className="">
+										<Select
+											className="basic-single"
+											classNamePrefix="select"
+											defaultValue={0}
+											isDisabled={false}
+											isLoading={false}
+											isClearable={true}
+											isRtl={false}
+											isSearchable={true}
+											name="Course"
+											options={this.state.allCourseNames}
+											onChange={this.setAssignCourseId }
+										/>
+									</div>
+								</div>
+								
+
+								
+								<div className="col-md-6">
+									<label className="mt-2 mr-2 ">
+										<b>Select Instructor:</b>
+									</label>
+									
+									<div className="">
+										<Select
+											className="basic-single"
+											classNamePrefix="select"
+											defaultValue={0}
+											isDisabled={false}
+											isLoading={false}
+											isClearable={true}
+											isRtl={false}
+											isSearchable={true}
+											name="Course"
+											options={this.state.allInstructorNames}
+											onChange={ this.setAssignInstructorId}
+										/>
+									</div>
+								</div>
+								
+								<div className="col-md-6">
+									<label className="mt-4 mr-2">
+										<b>Select Department:</b>
+									</label>
+									<div className="">
+										<Select
+											className="basic-single"
+											classNamePrefix="select"
+											defaultValue={0}
+											isDisabled={false}
+											isLoading={false}
+											isClearable={true}
+											isRtl={false}
+											isSearchable={true}
+											name="Course"
+											options={this.state.allDepts}
+											onChange={this.setDepartmentId }
+										/>
+									</div>
+								</div>
+								<div className="col-md-6">
+									<label className="mt-4 mr-2">
+										<b>Select Level:</b>
+									</label>
+									
+									<select className="form-control" style={{borderRadius: 5}} onChange={(e) => this.setState({assignLevelId: e.target.value})}>
+										<option value="">Select a level</option>
+										{
+											this.state.allLevels && this.state.allLevels.length ?
+												this.state.allLevels.map((level, index) => {
+													return (
+														<option value={level.id} key={index}>{level.name}</option>
+													)
+												})
+												:
+												null
+										}
+									</select>
+								</div>
+								
+								
+								<div className="col-md-6">
+									<div className="mt-5">
+										{this.state.assignCourseFormIncomplete ?
+											<div
+												className="bg-danger border-rad-full text-center p-2 mb-3 custom-form-alert">
+												<p className="small text-white mb-0">
+													<Unicons.UilExclamationCircle size="20"/> Please fill in all fields.
+												</p>
+											</div>
+											: null
+										}
+										
+										{this.state.error ?
+											<div className="bg-danger border-rad-full text-center p-2 mb-3">
+												<p className="small text-white mb-0">
+													<Unicons.UilBell size="20"/> {this.state.errorMessage}
+												</p>
+											</div>
+											: null
+										}
+									</div>
+								</div>
+							</div>
+						</ModalBody>
+						
+						<ModalFooter>
+							<button className="btn btn-primary">
+								Add Course
+								{
+									this.state.assignCourseLoading ?
+										<span className="ml-2">
+										<ClipLoader size={20} color={"#fff"}
+													Loading={this.state.assignCourseLoading}/>
+									</span>
+										:
+										null
+								}
+							</button>
+							
+							<button type="button" className="btn btn-danger" onClick={this.toggleAssignCourseAlt}>Close</button>
 						</ModalFooter>
 					</form>
 				</Modal>

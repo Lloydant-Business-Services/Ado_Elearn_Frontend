@@ -15,6 +15,7 @@ import InstructorAssignmentSubmission from "../pages/Instructor/AssignmentSubmis
 import InstructorAnnouncements from "../pages/Instructor/Announcements";
 import InstructorLiveLectures from "../pages/Instructor/LiveLectures";
 import EmailNotification from "../pages/Instructor/EmailNotification";
+import MaterialBank from "../pages/Instructor/CourseMaterialBank";
 import Quiz from "../pages/Instructor/Quiz";
 import QuizSubmission from "../pages/Instructor/QuizSubmission";
 
@@ -22,7 +23,7 @@ const InstructorBody = (props) => {
 	return (
 		<>
 			<div className={props[stateKeys.PAGE_CLASS]}>
-				<section className="sidenav-enabled pb-3 pb-md-4">
+				<section className="sidenav-enabled pb-3 pb-md-4" style={{minHeight:"90vh"}}>
 					<Header/>
 					<ErrorBoundary>
 						<Suspense fallback={<p>Loading...</p>}>
@@ -40,11 +41,13 @@ const InstructorBody = (props) => {
 									<Route path={'/instructor/emailnotification'} component={EmailNotification} exact={true}/>
 									<Route path={'/instructor/quiz'} component={Quiz} exact={true}/>
 									<Route path={'/instructor/quizsubmission'} component={QuizSubmission} exact={true}/>
+									<Route path={'/instructor/materialbank'} component={MaterialBank} exact={true}/>
 								</Switch>
 							</div>
 						</Suspense>
 					</ErrorBoundary>
 				</section>
+				<p className="text-center copyright" style={{fontSize:"14px"}}>Powered by <span className="text-success">TETfund</span></p>
 			</div>
 		</>
 	)

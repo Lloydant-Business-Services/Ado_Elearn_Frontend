@@ -608,7 +608,9 @@ class InstructorCourse extends Component {
     createQuiz = (e) => {
         e.preventDefault();
 
-        if (!this.state.newAssignmentName || !this.state.newAssignmentInstruction || !this.state.newAssignmentMaxScore || !this.state.newAssignmentDDate) {
+        if (!this.state.newAssignmentName || !this.state.newAssignmentInstruction || !this.state.newAssignmentMaxScore 
+            || !this.state.newAssignmentDDate
+            ) {
             this.setState({ newAssignmentFormIncomplete: true });
 
             setTimeout(() => {
@@ -1216,7 +1218,7 @@ class InstructorCourse extends Component {
                                     />
                                 </div>
 
-                                <div className="col-md-6 mt-3">
+                                {/* <div className="col-md-6 mt-3">
                                     <label className="mt-2 mr-2 ">
                                         <b>
                                             Assignment File: <span className="text-danger small">Accept: PDF, docx, txt</span>
@@ -1231,7 +1233,7 @@ class InstructorCourse extends Component {
                                             this.assignmentFileSelect(e);
                                         }}
                                     />
-                                </div>
+                                </div> */}
 
                                 <div className="col-md-6 mt-3">
                                     <label className="mt-2 mr-2 ">
@@ -1240,7 +1242,7 @@ class InstructorCourse extends Component {
 
                                     <input
                                         id="oName"
-                                        type="date"
+                                        type="datetime-local"
                                         className="form-control"
                                         value={this.state.newAssignmentDDate}
                                         onChange={(e) =>
@@ -1393,7 +1395,7 @@ class InstructorCourse extends Component {
                                     />
                                 </div>
 
-                                <div className="col-md-6 mt-3">
+                                {/* <div className="col-md-6 mt-3">
                                     <label className="mt-2 mr-2 ">
                                         <b>
                                             Assignment File: <span className="text-danger small">Accept: PDF, docx, txt</span>
@@ -1408,7 +1410,7 @@ class InstructorCourse extends Component {
                                             this.assignmentFileSelect(e);
                                         }}
                                     />
-                                </div>
+                                </div> */}
 
                                 <div className="col-md-6 mt-3">
                                     <label className="mt-2 mr-2 ">
@@ -1650,7 +1652,7 @@ class InstructorCourse extends Component {
                                     />
                                 </div> */}
 
-                                <div className="col-md-6 mt-3">
+                                {/* <div className="col-md-6 mt-3">
                                     <label className="mt-2 mr-2 ">
                                         <b>
                                             Quiz File: <span className="text-danger small">Accept: PDF, docx, txt</span>
@@ -1665,7 +1667,7 @@ class InstructorCourse extends Component {
                                             this.assignmentFileSelect(e);
                                         }}
                                     />
-                                </div>
+                                </div> */}
 
                                 <div className="col-md-6 mt-3">
                                     <label className="mt-2 mr-2 ">
@@ -1674,7 +1676,7 @@ class InstructorCourse extends Component {
 
                                     <input
                                         id="oName"
-                                        type="date"
+                                        type="datetime-local"
                                         className="form-control"
                                         value={this.state.newAssignmentDDate}
                                         onChange={(e) =>

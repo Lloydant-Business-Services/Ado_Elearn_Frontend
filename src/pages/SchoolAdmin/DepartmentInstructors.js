@@ -238,7 +238,12 @@ class SchoolAdminDepartmentInstructors extends Component {
 			});
 		
 	};
-	
+	toggleNewStudents = () => {
+		this.setState({ newStudents: !this.state.newStudents });
+	  };
+	openNewStudents = () => {
+		this.setState({ newStudents: true });
+	  };
 	componentDidMount() {
 		this.loadDataFromServer();
 	}
@@ -247,6 +252,59 @@ class SchoolAdminDepartmentInstructors extends Component {
 			deleteInstructor:!this.state.deleteInstructor
 		})
 	}
+	studentFileSelect(e) {
+		this.setState({ studentFile: e.target.files[0] });
+	  }
+	  newStudentsSuccess = () => toast.success("Uploads successful!", {
+		style: {
+			border: '1px solid #56b39d',
+			padding: '16px',
+			background: '#56b39d',
+			color: '#fff',
+			borderRadius: '2rem',
+		},
+		iconTheme: {
+			primary: '#FFFAEE',
+			secondary: '#56b39d',
+		},
+	});
+	createLecturersBulk = (e) => {
+		e.preventDefault();
+	
+		if (!this.state.studentFile) {
+		  this.setState({ newStudentFormIncomplete: true });
+	
+		  setTimeout(() => {
+			this.setState({ newStudentFormIncomplete: false });
+		  }, 3000);
+	
+		  return;
+		}
+	
+		this.setState({ newStudentsLoading: true, success: false, error: false });
+	
+		const studentProps = new FormData();
+		studentProps.append("file", this.state.studentFile);
+	
+		const id = this.state.thisDepartment.id;
+	
+		Endpoint.addInstructorsBulk(studentProps, id).then((res) => {
+		  console.log(res.data);
+		 // if (res.status === 200) {
+			this.setState({
+			  error: false,
+			  success: true,
+			  newStudents: false,
+			  newStudentsLoading: false,
+			  studentFile: null,
+			});
+	
+			this.newStudentsSuccess();
+		  //}
+		  this.loadDataFromServer();
+
+		});
+	  };
 	render() {
 		return (
 			<>
@@ -266,12 +324,17 @@ class SchoolAdminDepartmentInstructors extends Component {
 					<div className="d-flex flex-wrap justify-content-between">
 						<h1 className="mb-3 mr-2 text-primary my-auto">
 							<Unicons.UilBookAlt size="26" className="mr-2"/>
-							<span className="h2 capital">{this.state.thisDepartment.name}</span> | Instructors
+							<span className="h2 capital">{this.state.thisDepartment.name}</span> | Lecturers
 						</h1>
 						
-						<button className="btn btn-primary" onClick={this.openNewInstructor}>
-							<Unicons.UilPlus size="20"/> New Instructor
+				<div>
+				<button className="btn btn-primary" onClick={this.openNewInstructor}>
+							<Unicons.UilPlus size="20"/> New Lecturer
 						</button>
+						<button className="btn btn-primary" onClick={this.openNewStudents}>
+                <Unicons.UilPlus size="20" /> Bulk Upload
+              </button>
+				</div>
 					</div>
 					
 					<hr/>
@@ -291,12 +354,88 @@ class SchoolAdminDepartmentInstructors extends Component {
 					/>
 					</div>
 				</div>
-				
+				<Modal
+          isOpen={this.state.newStudents}
+          toggle={this.toggleNewStudents}
+          className="mt-5 md"
+        >
+          <form onSubmit={(e) => this.createLecturersBulk(e)}>
+            <ModalHeader toggle={this.toggleNewStudents}>
+              <span className="h3">Upload Lecturers into {this.state.thisDepartment.name}</span>
+            </ModalHeader>
+
+            <ModalBody>
+              <div className="form-group row">
+                <div className="col-md-12">
+                  <label className="mt-2 mr-2 ">
+                    <b>Lecturer Excel File:</b>
+                  </label>
+
+                  <input
+                    id="students"
+                    type="file"
+                    className="form-control"
+                    accept=".xlsx"
+                    ref={(fileInput) => (this.fileInput = fileInput)}
+                    onChange={(e) => {
+                      this.studentFileSelect(e);
+                    }}
+                  />
+                </div>
+                <div>
+                  <p className="small ml-3 mt-2">Excel File format: (S/N, Surname, Firstname, Email)</p>
+                </div>
+
+                <div className="col-md-12">
+                  {this.state.newStudentFormIncomplete ? (
+                    <div className="bg-danger border-rad-full text-center p-2 my-3">
+                      <p className="small text-white mb-0">
+                        <Unicons.UilExclamationCircle size="20" /> Please select
+                        an excel file to upload.
+                      </p>
+                    </div>
+                  ) : null}
+
+                  {this.state.error ? (
+                    <div className="bg-danger border-rad-full text-center p-2 my-3">
+                      <p className="small text-white mb-0">
+                        <Unicons.UilBell size="20" /> {this.state.errorMessage}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </ModalBody>
+
+            <ModalFooter>
+              <button className="btn btn-primary">
+                Upload Lecturers
+                {this.state.newStudentsLoading ? (
+                  <span className="ml-2">
+                    <ClipLoader
+                      size={20}
+                      color={"#fff"}
+                      Loading={this.state.newStudentsLoading}
+                    />
+                  </span>
+                ) : null}
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={this.toggleNewStudents}
+              >
+                Close
+              </button>
+            </ModalFooter>
+          </form>
+        </Modal>
 				
 				<Modal isOpen={this.state.newInstructor} toggle={this.toggleNewInstructor} className="mt-5 md" size="lg">
 					<form onSubmit={(e) => this.createInstructor(e)}>
 						<ModalHeader toggle={this.toggleNewInstructor}>
-							<span className="h2">Add New Instructor</span>
+							<span className="h2">Add New Lecturer</span>
 						</ModalHeader>
 						
 						<ModalBody>
@@ -375,7 +514,7 @@ class SchoolAdminDepartmentInstructors extends Component {
 						
 						<ModalFooter>
 							<button className="btn btn-primary">
-								Add Instructor
+								Add Lecturer
 								{
 									this.state.newInstructorLoading ?
 										<span className="ml-2">
@@ -420,7 +559,7 @@ class SchoolAdminDepartmentInstructors extends Component {
 						
 						<ModalFooter>
 							<button className="btn btn-primary">
-								Delete Instructor
+								Delete Lecturer
 								{
 									this.state.deleteDepartmentLoading ?
 										<span className="ml-2">

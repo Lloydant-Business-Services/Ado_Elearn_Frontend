@@ -25,12 +25,14 @@ import SchoolAdminReportStudent from "../pages/SchoolAdmin/ReportStudent";
 import SchoolAdminAssignmentReport from "../pages/SchoolAdmin/ReportAssignmentCummulativeScore";
 import SchoolAdminAllAssignment from "../pages/SchoolAdmin/ReportAllAssignment";
 import Audits from "../pages/SchoolAdmin/Audits";
+import QuizReport from "../pages/SchoolAdmin/QuizAssignmentReport";
+import SubAdmins from "../pages/SchoolAdmin/Subadmins";
 
 const SuperAdminBody = (props) => {
   return (
     <>
       <div className={props[stateKeys.PAGE_CLASS]}>
-        <section className="sidenav-enabled pb-3 pb-md-4">
+        <section className="sidenav-enabled pb-3 pb-md-4" style={{minHeight:"90vh"}}>
           <Header />
           <ErrorBoundary>
             <Suspense fallback={<p>Loading...</p>}>
@@ -116,11 +118,24 @@ const SuperAdminBody = (props) => {
                     component={SchoolAdminAllAssignment}
                     exact={true}
                   />
+
+                  <Route
+                    path={"/schooladmin/quizreport"}
+                    component={SchoolAdminAllAssignment}
+                    exact={true}
+                  />
+
+<Route
+                    path={"/schooladmin/subadmins"}
+                    component={SubAdmins}
+                    exact={true}
+                  />
                 </Switch>
               </div>
             </Suspense>
           </ErrorBoundary>
         </section>
+        <p className="text-center copyright" style={{fontSize:"14px"}}>Powered by <span className="text-success">TETfund</span></p>
       </div>
     </>
   );

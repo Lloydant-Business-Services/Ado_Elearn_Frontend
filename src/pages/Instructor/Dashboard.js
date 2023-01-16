@@ -11,6 +11,8 @@ import toast, {Toaster} from "react-hot-toast";
 import ClipLoader from "react-spinners/ClipLoader";
 import {Link} from "react-router-dom";
 import Spinner from '../Front/Spinner';
+import {userType} from "../../utils/Identifiers"
+import {Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 
 
 class InstructorDashboard extends Component {
@@ -20,6 +22,7 @@ class InstructorDashboard extends Component {
 		profile: [],
 		announcements: [],
 		myCourses: [],
+		stCount: 0
 	};
 	
 	loadDataError = (error) => toast.error("Something went wrong, pls check your connection.", {
@@ -52,9 +55,18 @@ class InstructorDashboard extends Component {
 		
 		Endpoint.getInstructorCourses(user.userId)
 			.then((res3) => {
+				let studentCount = 0;
 				let coursePreview = res3.data.slice(0,3);
+				let allCourses = res3.data;
 				console.log(coursePreview);
 				this.setState({pageLoading: false, myCourses: coursePreview,})
+				//registeredStudents
+				for(let i = 0; i < allCourses.length; i++){
+					studentCount = studentCount + allCourses[i].registeredStudents
+				}
+				this.setState({
+					stCount: studentCount
+				})
 			})
 			.catch((error) => {
 				this.loadDataError(error, this);
@@ -65,7 +77,11 @@ class InstructorDashboard extends Component {
 			.then((res) => {
 				this.setState({profile: res.data, pageLoading: false,});
 				
-				Endpoint.getAnnouncements(res.data.department.id)
+				if(user.roleName == userType.schooladmin){
+					//do nothing
+				}
+				else{
+					Endpoint.getAnnouncements(res.data.department.id)
 					.then((res2) => {
 						let newsPreview = res2.data.slice(0,3);
 						console.log(newsPreview);
@@ -75,6 +91,7 @@ class InstructorDashboard extends Component {
 						this.loadDataError(error, this);
 						this.setState({pageLoading: false, })
 					});
+				}
 			})
 			.catch((error) => {
 				this.loadDataError(error, this);
@@ -87,7 +104,13 @@ class InstructorDashboard extends Component {
         localStorage.setItem('courseAllocationId', course?.courseAllocationId)
 		localStorage.setItem('courseId', course?.courseId)
 	}
-	
+	toggleRoleDrawer = () => {
+		console.log("gfch")
+		this.setState({
+			openRoleDrawer: !this.state.openRoleDrawer
+		})
+	}
+
 	componentDidMount() {
 		this.loadDataFromServer();
 	}
@@ -105,13 +128,87 @@ class InstructorDashboard extends Component {
 					position="top-center"
 					reverseOrder={false}
 				/>
-				
+				<Modal isOpen={this.state.openRoleDrawer} toggle={this.toggleRoleDrawer} className="mt-5 md">
+					<form onSubmit={(e) => this.createSession(e)}>
+						<ModalHeader toggle={this.toggleNewSession}>
+							<span className="h2">Login as:</span>
+						</ModalHeader>
+						
+						<ModalBody>
+						<div className='row'>
+						<div className='col-sm-12 '>
+						<Link to="/schooladmin/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									School Admin &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+							<div className='col-sm-12 mt-3'>
+							<Link to="/hod/dashboard">
+
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Department Administrator &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+						
+							<div className='col-sm-12 mt-3'>
+							<Link to="/instructor/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Instructor &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+
+							<div className='col-sm-12 mt-3'>
+							<Link to="/student/dashboard">
+								<button className='btn btn-warning col-sm-12' style={{padding:"20px"}}>
+									Student &nbsp; <i className='fa fa-user-o'/>
+								</button>
+								</Link>
+
+							</div>
+
+						</div>
+						</ModalBody>
+						
+						{/* <ModalFooter>
+							<button className="btn btn-primary">
+								Add Session
+								{
+									this.state.newSessionLoading ?
+										<span className="ml-2">
+											<ClipLoader size={20} color={"#fff"}
+														Loading={this.state.newSessionLoading}/>
+										</span>
+										:
+										null
+								}
+							</button>
+							
+							<button type="button" className="btn btn-danger" onClick={this.toggleNewSession}>Close</button>
+						</ModalFooter> */}
+					</form>
+				</Modal>
 				<div className="container-fluid py-5">
-					<h1 className="mb-3 text-primary" style={{fontSize:"21px"}}>
+				
+					<div className='row'>
+						<div className='col-sm-12 col-lg-10'>
+						<h1 className="mb-3 text-primary" style={{fontSize:"21px"}}>
 						<Unicons.UilApps size="24" className="mr-2"/>
-						Instructor Dashboard
+						Lecturer Dashboard
 					</h1>
-					
+						</div>
+
+						{this.state.user?.roleName == "School Admin" ? <div className='col-sm-12 col-lg-2'>
+						<h1 className="mb-3 text-primary">
+						<button onClick={this.toggleRoleDrawer} className='btn btn-primary'>Switch Role &nbsp;<i className='fa fa-angle-down'/></button>
+						</h1>
+					</div> : null}
+					</div>
 					<div className="row">
 						<div className="col-12 col-sm-6 col-xl-3">
 							<div className="card illustration flex-fill">
@@ -136,8 +233,7 @@ class InstructorDashboard extends Component {
 								<div className="card-body p-3">
 									<div className="media">
 										<div className="media-body">
-											{/* <h1>{this.state.institutionDetails.allDepartments}</h1> */}
-											<h1>1</h1>
+											<h1>{this.state.myCourses?.length}</h1>
 											<p className="mb-0">Courses</p>
 										</div>
 										
@@ -159,7 +255,7 @@ class InstructorDashboard extends Component {
 										<div className="media-body">
 											<h1>
 												{/* {this.state.institutionDetails.allInstructors} */}
-												0
+												{this.state.stCount}
 												</h1>
 											<p className="mb-0">Students</p>
 										</div>
